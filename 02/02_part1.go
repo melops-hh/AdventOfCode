@@ -8,6 +8,15 @@ import (
 	"strings"
 )
 
+func main() {
+	sum := 0
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		sum += isSafe(scanner.Text())
+	}
+	fmt.Println(sum)
+}
+
 func abs(x int) int {
 	if x < 0 {
 		return -x
@@ -15,57 +24,32 @@ func abs(x int) int {
 	return x
 }
 
-func main() {
-	scanner := bufio.NewScanner(os.Stdin)
-	var reports [][]int
-	sumOfSafe := 0
-	for scanner.Scan() {
-		line := scanner.Text()
-		split := strings.Split(line, " ")
-		var r []int
-		isSafe := true
-		var isIncreasing bool
-		for i := range split {
-			a, err := strconv.Atoi(split[i])
-			if err != nil {
-				panic(err)
-			}
-			r = append(r, a)
-			if i > 0 {
-				dif := r[i] - r[i-1]
-				absDif := abs(dif)
-				// fmt.Printf("i: %d, a: %d, dif: %d, absDif: %d\n", i, a, dif, absDif)
-				if absDif < 1 || absDif > 3 {
-					// fmt.Println("dif is too big")
-					isSafe = false
-					break
-				}
+func isSafe(s string) int {
+	intArr := toInt(s)
+	dec := intArr[0]-intArr[1] > 0
 
-				if i == 1 {
-					if r[i]-r[i-1] < 0 {
-						isIncreasing = false
-					} else {
-						isIncreasing = true
-					}
-				} else {
-					if isIncreasing && dif <= 0 {
-						// fmt.Println("inc dif >=0")
-						isSafe = false
-						break
-					}
-					if !isIncreasing && dif >= 0 {
-						// fmt.Println("dec dif <=0")
-						isSafe = false
-						break
-					}
-				}
-			}
+	for i := 1; i < len(intArr); i++ {
+		diff := intArr[i-1] - intArr[i]
+		if dec && diff < 0 {
+			return 0
 		}
-		if isSafe {
-			sumOfSafe++
+		if !dec && diff > 0 {
+			return 0
 		}
-		reports = append(reports, r)
-
+		if abs(diff) < 1 || abs(diff) > 3 {
+			return 0
+		}
 	}
-	fmt.Printf("Sum of Safe: %d\n", sumOfSafe)
+	return 1
+}
+
+func toInt(s string) []int {
+	strs := strings.Fields(s)
+	arr := make([]int, len(strs))
+	for index, strval := range strs {
+		ival, _ := strconv.Atoi(strval)
+		arr[index] = ival
+	}
+	return arr
+
 }
