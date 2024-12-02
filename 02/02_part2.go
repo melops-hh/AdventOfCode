@@ -17,43 +17,52 @@ func main() {
 	fmt.Println(sum)
 }
 
-func abs(x int) int {
-	if x < 0 {
-		return -x
-	}
-	return x
-}
-
-func checkArr(intArr []int) (bool, int) {
-	dec := intArr[0]-intArr[1] > 0
+func checkArr(intArr []int) bool {
+	inc, dec := false, false
 
 	for i := 1; i < len(intArr); i++ {
-		diff := intArr[i-1] - intArr[i]
-		if dec && diff < 0 {
-			return false, i
+		diff := intArr[i] - intArr[i-1]
+		if diff > 0 {
+			inc = true
+		} else if diff < 0 {
+			dec = true
+		} else {
+			return false
 		}
-		if !dec && diff > 0 {
-			return false, i
+		if dec && inc {
+			return false
 		}
-		if abs(diff) < 1 || abs(diff) > 3 {
-			return false, i
+		if diff > 3 || diff < -3 {
+			return false
 		}
 	}
 
-	return true, 0
+	return true
 
+}
+
+func isDelSafe(intArr []int, index int) bool {
+	newArr := make([]int, len(intArr))
+	copy(newArr, intArr)
+
+	if index == len(newArr)-1 {
+		newArr = newArr[:index]
+	} else {
+		newArr = append(newArr[:index], newArr[index+1:]...)
+	}
+	return checkArr(newArr)
 }
 
 func isSafe(s string) int {
 	intArr := toInt(s)
-	safe, i := checkArr(intArr)
-	if safe {
+	if checkArr(intArr) {
 		return 1
-	}
-	intArr2 := append(intArr[:i], intArr[i+1:]...)
-	safe1, _ := checkArr(intArr2)
-	if safe1 {
-		return 1
+	} else {
+		for i := 0; i < len(intArr); i++ {
+			if isDelSafe(intArr, i) {
+				return 1
+			}
+		}
 	}
 	return 0
 }
