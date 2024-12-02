@@ -8,16 +8,6 @@ import (
 	"strings"
 )
 
-func checkKnown(known map[int]int, i int) (bool, int) {
-	for n, m := range known {
-		if n == i {
-			return true, m
-		}
-	}
-	return false, 0
-
-}
-
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 
@@ -40,10 +30,10 @@ func main() {
 
 	known := map[int]int{}
 	sum := 0
+
 	for i := range left {
-		isKnown, knownVal := checkKnown(known, left[i])
-		if isKnown {
-			sum += knownVal
+		if val, exists := known[left[i]]; exists {
+			sum += val
 		} else {
 			appearances := 0
 			for j := range right {

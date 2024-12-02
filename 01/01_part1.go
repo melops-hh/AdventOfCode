@@ -4,21 +4,16 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
 
-func quickSort(a []int) []int {
-	for i := 0; i < len(a); i++ {
-		for j := 0; j < len(a)-1-i; j++ {
-			if a[j] > a[j+1] {
-				tmp := a[j]
-				a[j] = a[j+1]
-				a[j+1] = tmp
-			}
-		}
+func abs(x int) int {
+	if x < 0 {
+		return -x
 	}
-	return a
+	return x
 }
 
 func main() {
@@ -41,17 +36,12 @@ func main() {
 		right = append(right, r)
 	}
 
-	left = quicksort(left)
-	right = quicksort(right)
+	sort.Ints(left)
+	sort.Ints(right)
 
 	sum := 0
 	for i := 0; i < len(left); i++ {
-		if right[i]-left[i] < 0 {
-			sum += left[i] - right[i]
-		} else {
-
-			sum += right[i] - left[i]
-		}
+		sum += abs(left[i] - right[i])
 	}
 	fmt.Println("sum:", sum)
 }
