@@ -1,56 +1,81 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"regexp"
 	"strconv"
-	"strings"
 )
 
-// Wrong answers:
-// 78965138 to high
-// 146499494
-// 153469856 to high
-
-func main() {
-	scanner := bufio.NewScanner(os.Stdin)
-	sum := 0
-	for scanner.Scan() {
-		sum += handleText(scanner.Text())
+func readFile() string {
+	data, err := os.ReadFile("input_test2.txt")
+	if err != nil {
+		panic(err)
 	}
-	fmt.Println("sum:", sum)
+	return string(data)
 }
 
-func handleText(s string) int {
-	fmt.Println("\nhandle new line\n")
-	r, _ := regexp.Compile("mul\\(\\d{1,3},\\d{1,3}\\)|do\\(\\)|don\\'t\\(\\)")
-	match := r.FindAllString(s, -1)
-	sum := 0
-	enabled := true
-	for _, mul := range match {
-		newDo, s := multiply(mul, enabled)
-		fmt.Printf("multiply %s, do: %t, sum: %d, newDo: %t newSum: %d\n", mul, enabled, sum, newDo, s)
-		if enabled {
-			sum += s
+func parseMul(input string) [][]int {
+	regex := regexp.MustCompile(`mul\((\d{1,3}),(\d{1,3})\)`)
+	return regex.FindAllStringSubmatchIndex(input, -1)
+}
+
+func parseDont(input string) [][]int {
+	regex := regexp.MustCompile(`don't\(\)|do\(\)`)
+	matches := regex.FindAllStringSubmatchIndex(input, -1)
+
+	var skips [][]int
+	skipStart := 0
+	skipping := false
+
+	for i, m := range matches {
+		startIndex, endIndex := m[0], m[1]
+		match := input[startIndex:endIndex]
+		if match == "don't()" && !skipping {
+			skipping = true
+			skipStart = startIndex
 		}
-		enabled = newDo
+		if match == "do()" && skipping {
+			skipping = false
+			skips = append(skips, []int{skipStart, endIndex})
+		}
+		if i == len(matches)-1 && skipping {
+			skips = append(skips, []int{skipStart, len(input)})
+		}
+	}
+
+	return skips
+}
+
+func multiply(muls [][]int, donts [][]int, input string) int {
+	sum := 0
+	for _, m := range muls {
+		skip := false
+		for _, d := range donts {
+			if m[0] >= d[0] && m[1] <= d[1] {
+				skip = true
+			}
+		}
+
+		if !skip {
+			a, err := strconv.Atoi(input[m[2]:m[3]])
+			if err != nil {
+				panic(err)
+			}
+			b, err := strconv.Atoi(input[m[4]:m[5]])
+			if err != nil {
+				panic(err)
+			}
+			sum += a * b
+		}
 	}
 	return sum
 }
 
-func multiply(s string, enabled bool) (bool, int) {
-	if s == "do()" {
-		return true, 0
-	} else if s == "don't()" || !enabled {
-		return false, 0
-	}
-
-	s = s[4 : len(s)-1]
-	split := strings.Split(s, ",")
-	a, _ := strconv.Atoi(split[0])
-	b, _ := strconv.Atoi(split[1])
-	return true, a * b
-
+func main() {
+	input := readFile()
+	muls := parseMul(input)
+	donts := parseDont(input)
+	sum := multiply(muls, donts, input)
+	fmt.Println("Sum:", sum)
 }
