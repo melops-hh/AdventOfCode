@@ -1,10 +1,10 @@
 package main
 
 import (
+	"aoc24/utils"
 	"bufio"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -71,8 +71,8 @@ func toInt(s string) []int {
 	strs := strings.Fields(s)
 	arr := make([]int, len(strs))
 	for index, strval := range strs {
-		ival, _ := strconv.Atoi(strval)
-		arr[index] = ival
+		i := utils.ToInt(strval)
+		arr[index] = i
 	}
 	return arr
 

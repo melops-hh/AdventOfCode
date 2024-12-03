@@ -1,19 +1,10 @@
 package main
 
 import (
+	"aoc24/utils"
 	"fmt"
-	"os"
 	"regexp"
-	"strconv"
 )
-
-func readFile() string {
-	data, err := os.ReadFile("input_test2.txt")
-	if err != nil {
-		panic(err)
-	}
-	return string(data)
-}
 
 func parseMul(input string) [][]int {
 	regex := regexp.MustCompile(`mul\((\d{1,3}),(\d{1,3})\)`)
@@ -58,14 +49,8 @@ func multiply(muls [][]int, donts [][]int, input string) int {
 		}
 
 		if !skip {
-			a, err := strconv.Atoi(input[m[2]:m[3]])
-			if err != nil {
-				panic(err)
-			}
-			b, err := strconv.Atoi(input[m[4]:m[5]])
-			if err != nil {
-				panic(err)
-			}
+			a := utils.ToInt(input[m[2]:m[3]])
+			b := utils.ToInt(input[m[4]:m[5]])
 			sum += a * b
 		}
 	}
@@ -73,7 +58,7 @@ func multiply(muls [][]int, donts [][]int, input string) int {
 }
 
 func main() {
-	input := readFile()
+	input := utils.ReadFile("input.txt")
 	muls := parseMul(input)
 	donts := parseDont(input)
 	sum := multiply(muls, donts, input)

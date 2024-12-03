@@ -1,10 +1,10 @@
 package main
 
 import (
+	"aoc24/utils"
 	"bufio"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -16,14 +16,8 @@ func main() {
 	for scanner.Scan() {
 		line := scanner.Text()
 		split := strings.Split(line, " ")
-		l, err := strconv.Atoi(split[0])
-		if err != nil {
-			panic(err)
-		}
-		r, err := strconv.Atoi(split[len(split)-1])
-		if err != nil {
-			panic(err)
-		}
+		l := utils.ToInt(split[0])
+		r := utils.ToInt(split[len(split)-1])
 		left = append(left, l)
 		right = append(right, r)
 	}

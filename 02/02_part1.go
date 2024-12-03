@@ -1,10 +1,10 @@
 package main
 
 import (
+	"aoc24/utils"
 	"bufio"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -15,13 +15,6 @@ func main() {
 		sum += isSafe(scanner.Text())
 	}
 	fmt.Println(sum)
-}
-
-func abs(x int) int {
-	if x < 0 {
-		return -x
-	}
-	return x
 }
 
 func isSafe(s string) int {
@@ -36,7 +29,7 @@ func isSafe(s string) int {
 		if !dec && diff > 0 {
 			return 0
 		}
-		if abs(diff) < 1 || abs(diff) > 3 {
+		if utils.Abs(diff) < 1 || utils.Abs(diff) > 3 {
 			return 0
 		}
 	}
@@ -47,8 +40,8 @@ func toInt(s string) []int {
 	strs := strings.Fields(s)
 	arr := make([]int, len(strs))
 	for index, strval := range strs {
-		ival, _ := strconv.Atoi(strval)
-		arr[index] = ival
+		i := utils.ToInt(strval)
+		arr[index] = i
 	}
 	return arr
 

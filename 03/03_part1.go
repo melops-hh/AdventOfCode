@@ -1,11 +1,11 @@
 package main
 
 import (
+	"aoc24/utils"
 	"bufio"
 	"fmt"
 	"os"
 	"regexp"
-	"strconv"
 	"strings"
 )
 
@@ -31,7 +31,7 @@ func handleText(s string) int {
 func multiply(s string) int {
 	s = s[4 : len(s)-1]
 	split := strings.Split(s, ",")
-	a, _ := strconv.Atoi(split[0])
-	b, _ := strconv.Atoi(split[1])
+	a := utils.ToInt(split[0])
+	b := utils.ToInt(split[1])
 	return a * b
 }
